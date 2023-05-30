@@ -2,7 +2,7 @@ import random
 import matplotlib.pyplot as plt
 
 # calculate the conflict numbers of each solution
-def conflict_score(chromosome):
+def fitness_score(chromosome):
     n = len(chromosome)
     diagonal_collisions = 0
     horizontal_collisions = sum(
@@ -20,7 +20,7 @@ def conflict_score(chromosome):
 
 
 def selection(population):
-    fitness_values = [conflict_score(chromosome) for chromosome in population]
+    fitness_values = [fitness_score(chromosome) for chromosome in population]
     total_fitness = sum(fitness_values)
     probabilities = [fitness_value /
                      total_fitness for fitness_value in fitness_values]
@@ -51,6 +51,8 @@ def mutation(chromosome, mutation_probability):
 def genetic_algorithm(population_size, mutation_probability, max_generations, n):
     population = [[random.randint(0, n-1) for i in range(n)]
                   for j in range(population_size)]
+    
+    
     fitness_history = []
     best_solutions = []
 
@@ -67,15 +69,15 @@ def genetic_algorithm(population_size, mutation_probability, max_generations, n)
 
         # if there is solution
         for chromosome in population:
-            if conflict_score(chromosome) == (n*(n-1))/2:
+            if fitness_score(chromosome) == (n*(n-1))/2:
                 best_solutions.append(chromosome)
                 return chromosome, fitness_history, best_solutions
 
         # calculate average score to plot them and store best solutions so far in every generate
-        avg_fitness = sum([conflict_score(chromosome)
+        avg_fitness = sum([fitness_score(chromosome)
                           for chromosome in population])/population_size
         fitness_history.append(avg_fitness)
-        best_solution_so_far = max(population, key=conflict_score)
+        best_solution_so_far = max(population, key=fitness_score)
         best_solutions.append(best_solution_so_far)
 
     # If there was no solution
